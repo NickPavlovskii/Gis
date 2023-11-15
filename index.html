@@ -130,7 +130,8 @@
           <input type="checkbox" id="layerSwitch" class="toggle-checkbox" checked>
           <i class="fas fa-layer-group toggle-icon"></i> Show/Hide Layer
         </label>
- 
+        <ul id="coordinates-list"></ul>
+
         <div id="classSwitches">
           <h4>Class Switches</h4>
           <!-- Переключатели классов -->
@@ -304,52 +305,12 @@
     });
     var layer1 = new ol.layer.Image({
       source: new ol.source.ImageWMS({
-        url: 'http://localhost:8081/geoserver/shp/tif-0-1/wms',  	
+        url: 'http://localhost:8081/geoserver/ne/tif/wms',  	
         params: {
-          'LAYERS': 'tif-0-1',
+          'LAYERS': 'tif',
         },
       }),
     
-    });
-    var layer2 = new ol.layer.Image({
-      source: new ol.source.ImageWMS({
-        url: 'http://localhost:8081/geoserver/shp/tif-0-0/wms',  	
-        params: {
-          'LAYERS': 'tif-0-0',
-        },
-      }) 
-    });
-    var layer3 = new ol.layer.Image({
-      source: new ol.source.ImageWMS({
-        url: 'http://localhost:8081/geoserver/shp/tif-0-2/wms',  	
-        params: {
-          'LAYERS': 'tif-0-2',
-        },
-      }) 
-    });
-    var layer4 = new ol.layer.Image({
-      source: new ol.source.ImageWMS({
-        url: 'http://localhost:8081/geoserver/shp/tif-1-2/wms',  	
-        params: {
-          'LAYERS': 'tif-1-2',
-        },
-      }) 
-    });
-    var layer5 = new ol.layer.Image({
-      source: new ol.source.ImageWMS({
-        url: 'http://localhost:8081/geoserver/shp/tif-1-1/wms',  	
-        params: {
-          'LAYERS': 'tif-1-1',
-        },
-      }) 
-    });
-    var layer6 = new ol.layer.Image({
-      source: new ol.source.ImageWMS({
-        url: 'http://localhost:8081/geoserver/shp/tif-1-0/wms',  	
-        params: {
-          'LAYERS': 'tif-1-0',
-        },
-      }) 
     });
 
 
@@ -363,7 +324,7 @@
           source: new ol.source.OSM()
         }),
 
-        // layer1,
+        layer1,
         // layer2,
         // layer3,
         // layer,
@@ -380,48 +341,57 @@
       })
     });
     document.getElementById('button').addEventListener('click', function() {
-  // Создайте фильтр для получения объектов с классом "ship"
-  var shipFilter = new ol.format.filter.EqualTo('CLASS', 'ship');
+      // Создайте фильтр для получения объектов с классом "ship"
+      var shipFilter = new ol.format.filter.EqualTo('CLASS', 'small-vehicle');
 
-  // Создайте WFS GetFeature запрос с фильтром
-  var wfsRequest = new ol.format.WFS().writeGetFeature({
-    srsName: 'EPSG:4326',  // Установите код проекции вашей карты
-    featureTypes: ['cars1'],
-    outputFormat: 'application/json',
-    filter: shipFilter,
-  });
+      // Создайте WFS GetFeature запрос с фильтром
+      var wfsRequest = new ol.format.WFS().writeGetFeature({
+        srsName: 'EPSG:4326',
+        featureTypes: ['cars1'],
+        outputFormat: 'application/json',
+        filter: shipFilter,
+      });
 
-  // Отправьте запрос на сервер GeoServer
-  fetch('http://localhost:8081/geoserver/web_map/cars1/wfs', {
-    method: 'POST',
-    body: new XMLSerializer().serializeToString(wfsRequest),
-    headers: new Headers({
-      'Content-Type': 'text/xml',
-    }),
-  })
-    .then(function(response) {
-      return response.json();
-    })
-    .then(function(json) {
-      // Выведите координаты объектов с классом "ship" в консоль
-      var features = json.features;
-      for (var i = 0; i < features.length; i++) {
-        var geometry = features[i].geometry;
-        var coordinates = geometry.coordinates[0][0][0]; // Получите координаты объекта
+      // Отправьте запрос на сервер GeoServer
+      fetch('http://localhost:8081/geoserver/web_map/cars1/wfs', {
+        method: 'POST',
+        body: new XMLSerializer().serializeToString(wfsRequest),
+        headers: new Headers({
+          'Content-Type': 'text/xml',
+        }),
+      })
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(json) {
+          // Выведите координаты объектов с классом "small-vehicle" в консоль и на веб-страницу
+          var features = json.features;
+          var coordinatesList = [];
 
-        console.log('Координаты объекта с классом "ship"', coordinates);
+          var outputList = document.getElementById('coordinates-list');
+          outputList.innerHTML = ''; // Очистите предыдущий список
 
-      
- // Переместите карту к координатам объекта
- var lon = coordinates[0];
-        var lat = coordinates[1];
-        map.getView().setCenter(ol.proj.fromLonLat([lon, lat]));
-        map.getView().setZoom(23); // Можете настроить масштаб
-        break; // Чтобы переместить карту к первому объекту и прекратить обход
-      }
-    });
-});
+          for (var i = 0; i < features.length; i++) {
+            var geometry = features[i].geometry;
+            var coordinates = geometry.coordinates[0][0][0]; // Получите координаты объекта
+            var vehicleClass = features[i].properties.CLASS;
 
+            // Выведите координаты и класс на веб-страницу
+            var listItem = document.createElement('li');
+            listItem.textContent = 'Объект ' + (i + 1) + ': ' + vehicleClass + ' - Координаты: ' + coordinates.join(', ');
+            listItem.dataset.coordinates = coordinates.join(', '); // Добавьте координаты в дата-атрибут
+            listItem.addEventListener('click', function() {
+              // Переместите карту к выбранному объекту
+              var selectedCoordinates = this.dataset.coordinates.split(',').map(Number);
+              var lon = selectedCoordinates[0];
+              var lat = selectedCoordinates[1];
+              map.getView().setCenter(ol.proj.fromLonLat([lon, lat]));
+              map.getView().setZoom(21); // Можете настроить масштаб
+            });
+            outputList.appendChild(listItem);
+          }
+        });
+      });
 var wfsSource = new ol.source.Vector({
   format: new ol.format.GeoJSON(),
   url: function (extent, resolution, projection) {
