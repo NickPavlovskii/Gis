@@ -117,326 +117,128 @@
 <body>
   <div style="display: flex;">
     <div id="map" style="width: 80%; height: 500px; float: left;"></div>
-    <div id="controls">
-      <div style="display: flex;"> 
-        <input type="text" id="searchInput" placeholder="Enter search query">
-        <button id="searchButton">Search</button>
-      </div>
-      <button id="button">Перейти к кораблю</button>
-      <ul id="coordinates-list"></ul>
-         <label for="layerSwitch" class="toggle-label">
-   
-      <div id="legend">
-        <h3>Legend</h3>
-        <!-- Переключатель для отображения/скрытия слоя -->
-        <label for="layerSwitch" class="toggle-label">
-          
-          <input type="checkbox" id="layerSwitch" class="toggle-checkbox" checked>
-          <i class="fas fa-layer-group toggle-icon"></i> Show/Hide Layer
-        </label>
-   
-
-        <div id="classSwitches">
-          <h4>Class Switches</h4>
-          <!-- Переключатели классов -->
-          <label class="class-switch-label">
-            <input type="checkbox" class="class-switch toggle-checkbox" value="small-vehicle" >
-            <i class="fas fa-car class-switch-icon toggle-icon"></i>
-            <span class="class-switch-name">Small Vehicles</span>
-          </label>
-          <label class="class-switch-label">
-            <input type="checkbox" class="class-switch" value="swimming-pool" >
-            <i class="class-switch-icon fas fa-swimmer checked"></i>
-            <span class="class-switch-name">Swimming Pools</span>
-          </label>
-          <label class="class-switch-label">
-            <input type="checkbox" class="class-switch" value="basketball-court">
-            <i class="class-switch-icon fas fa-basketball-ball checked"></i>
-            <span class "class-switch-name">Basketball Court</span>
-          </label>
-          <label class="class-switch-label">
-            <input type="checkbox" class="class-switch" value="large-vehicle" >
-            <i class="class-switch-icon fas fa-truck-pickup checked"></i>
-            <span class="class-switch-name">Large Vehicles</span>
-          </label>
-          <label class="class-switch-label">
-            <input type="checkbox" class="class-switch" value="storage-tank" >
-            <i class="class-switch-icon fas fa-cube "></i>
-            <span class="class-switch-name">Storage Tanks</span>
-          </label>
-          <label class="class-switch-label">
-            <input type="checkbox" class="class-switch" value="roundabout">
-            <i class="class-switch-icon fas fa-circle checked"></i>
-            <span class="class-switch-name">Roundabouts</span>
-          </label>
-        </div>
+ 
       </div>
     </div>
   </div>
   <script type="text/javascript">
-    var layerSwitch = document.getElementById('layerSwitch');
-    var searchButton = document.getElementById('searchButton');
-    var searchInput = document.getElementById('searchInput');
-    var classSwitches = document.querySelectorAll('.class-switch');
-
-    // Обработчик изменения состояния чекбоксов
-    var classSwitches = document.querySelectorAll(".class-switch");
-
-    classSwitches.forEach(function (switchElement) {
-      switchElement.addEventListener("change", function () {
-        var selectedClasses = [];
-
-        // Находим все выбранные классы
-        classSwitches.forEach(function (checkbox) {
-          if (checkbox.checked) {
-            selectedClasses.push(checkbox.value);
-          }
-        });
-
-        // Устанавливаем фильтры на каждом слое
-        shpLayerGroup.getLayers().forEach(function (layer) {
-          var source = layer.getSource();
-          var layerClass = source.getParams().LAYERS;
-          if (selectedClasses.length === 0 || selectedClasses.includes(layerClass)) {
-            // Если ничего не выбрано или текущий слой включен, отобразите слой и уберите фильтр
-            layer.setVisible(false);
-            source.updateParams({ CQL_FILTER: "" });
-          } else {
-            // В противном случае, скройте слой и установите фильтр на основе выбранных классов
-            layer.setVisible(true);
-            source.updateParams({ CQL_FILTER: "CLASS IN ('" + selectedClasses.join("','") + "')" });
-          }
-        });
-      });
-    });
-
-    // Определение слоя GeoServer
-    var shpLayer1 = new ol.layer.Image({
-      source: new ol.source.ImageWMS({
-        url: 'http://localhost:8081/geoserver/shp/cars1/wms',
-        params: {
-          'LAYERS': 'cars1',
-        },
-        serverType: 'geoserver',
-      })
-    });
-    var shpLayer2 = new ol.layer.Image({
-      source: new ol.source.ImageWMS({
-        url: 'http://localhost:8081/geoserver/shp/cars2/wms',
-        params: {
-          'LAYERS': 'cars2',
-        },
-        serverType: 'geoserver',
-      })
-    });
-    var shpLayer3 = new ol.layer.Image({
-      source: new ol.source.ImageWMS({
-        url: 'http://localhost:8081/geoserver/shp/cars3/wms',
-        params: {
-          'LAYERS': 'cars3',
-        },
-        serverType: 'geoserver',
-      })
-    });
-
-    var shpLayerGroup = new ol.layer.Group({
-      layers: [shpLayer1, shpLayer2, shpLayer3],
-    });
-
-    // Изначально отключаем shp слои
-    shpLayerGroup.getLayers().forEach(function (layer) {
-      layer.setVisible(false);
-    })
-
-  
-    // Определение слоя GeoServer
-        var shpLayer1 = new ol.layer.Image({
-            source: new ol.source.ImageWMS({
-                url: 'http://localhost:8081/geoserver/web_map/cars1/wms',
-                params: {
-                     'LAYERS': 'cars1',
-                
-                },
-                serverType: 'geoserver',
-   
-
-            })
-        });
-        var shpLayer2 = new ol.layer.Image({
-            source: new ol.source.ImageWMS({
-                url: 'http://localhost:8081/geoserver/shp/cars2/wms',
-                params: {
-                     'LAYERS': 'cars2',
-                
-                },
-                serverType: 'geoserver',
-   
-
-            })
-        });
-   
-         var shpLayer3 = new ol.layer.Image({
-            source: new ol.source.ImageWMS({
-                url: 'http://localhost:8081/geoserver/shp/cars3/wms',
-                params: {
-                     'LAYERS': 'cars3',
-                
-                },
-                serverType: 'geoserver',
-   
-
-            })
-        });
-
-        var shpLayerGroup = new ol.layer.Group({
-          layers: [shpLayer1, shpLayer2, shpLayer3],
-    
-        });
- // Изначально отключаем shp слои
- shpLayerGroup.getLayers().forEach(function (layer) {
-    layer.setVisible(false);
-  });
 
 
-    var layer = new ol.layer.Image({
-      source: new ol.source.ImageWMS({
-        url: 'http://localhost:8081/geoserver/web_map/Sablino_baza_ortho_5cm_MSK/wms',
-        params: {
-          'LAYERS': 'Sablino_baza_ortho_5cm_MSK',
-        },
-      }),
- 
-    });
-    var layer1 = new ol.layer.Image({
-      source: new ol.source.ImageWMS({
-        url: 'http://localhost:8081/geoserver/ne/tif/wms',  	
-        params: {
-          'LAYERS': 'tif',
-        },
-      }),
-    
-    });
 
 
-    
+// // Создание источника данных WFS
+// var wfsSource = new ol.source.Vector({
+//     format: new ol.format.GeoJSON(),
+//     url: function (extent, resolution, projection) {
+//         return 'http://localhost:8081/geoserver/tif/cars/wfs?' +
+//             'service=WFS&version=1.1.0&request=GetFeature' +
+//             '&typename=cars' +
+//             '&outputFormat=application/json' +
+//             '&srsname=EPSG:4326' +
+//             '&bbox=' + extent.join(',') + ',EPSG:4326';
+//     },
+// });
 
-      
+
+
+
     var map = new ol.Map({
       target: 'map',
       layers: [
         new ol.layer.Tile({
           source: new ol.source.OSM()
         }),
+      
 
-        layer1,
-        // layer2,
-        // layer3,
-        // layer,
-        // layer4,
-        // layer5,
-        // layer6,
-        // shpLayerGroup
-    
       ],
       view: new ol.View({
         center: ol.proj.fromLonLat([30.800289, 59.662412]),
         zoom: 15,
-        
       })
     });
-    document.getElementById('button').addEventListener('click', function() {
-      // Создайте фильтр для получения объектов с классом "ship"
-      var shipFilter = new ol.format.filter.EqualTo('CLASS', 'small-vehicle');
 
-      // Создайте WFS GetFeature запрос с фильтром
-      var wfsRequest = new ol.format.WFS().writeGetFeature({
-        srsName: 'EPSG:4326',
-        featureTypes: ['cars1'],
-        outputFormat: 'application/json',
-        filter: shipFilter,
-      });
 
-      // Отправьте запрос на сервер GeoServer
-      fetch('http://localhost:8081/geoserver/web_map/cars1/wfs', {
-        method: 'POST',
-        body: new XMLSerializer().serializeToString(wfsRequest),
-        headers: new Headers({
-          'Content-Type': 'text/xml',
-        }),
-      })
-        .then(function(response) {
-          return response.json();
-        })
-        .then(function(json) {
-          // Выведите координаты объектов с классом "small-vehicle" в консоль и на веб-страницу
-          var features = json.features;
-          var coordinatesList = [];
 
-          var outputList = document.getElementById('coordinates-list');
-          outputList.innerHTML = ''; // Очистите предыдущий список
 
-          for (var i = 0; i < features.length; i++) {
-            var geometry = features[i].geometry;
-            var coordinates = geometry.coordinates[0][0][0]; // Получите координаты объекта
-            var vehicleClass = features[i].properties.CLASS;
 
-            // Выведите координаты и класс на веб-страницу
-            var listItem = document.createElement('li');
-            listItem.textContent = 'Объект ' + (i + 1) + ': ' + vehicleClass + ' - Координаты: ' + coordinates.join(', ');
-            listItem.dataset.coordinates = coordinates.join(', '); // Добавьте координаты в дата-атрибут
-            listItem.addEventListener('click', function() {
-              // Переместите карту к выбранному объекту
-              var selectedCoordinates = this.dataset.coordinates.split(',').map(Number);
-              var lon = selectedCoordinates[0];
-              var lat = selectedCoordinates[1];
-              map.getView().setCenter(ol.proj.fromLonLat([lon, lat]));
-              map.getView().setZoom(21); // Можете настроить масштаб
-            });
-            outputList.appendChild(listItem);
-          }
-        });
-      });
-var wfsSource = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: function (extent, resolution, projection) {
-    return 'http://localhost:8081/geoserver/web_map/cars1/wfs?' +
-      'service=WFS&version=1.1.0&request=GetFeature' +
-      '&typename=cars1' +
-      '&outputFormat=application/json' +
-      '&srsname=' + projection.getCode() +
-      '&bbox=' + extent.join(',') + ',' + projection.getCode();
-  },
-  strategy: ol.loadingstrategy.bbox
+    var isCtrlPressed = false; // Флаг, указывающий, зажата ли клавиша Ctrl
+
+// Обработчик событий для отслеживания состояния клавиши Ctrl
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Control') {
+    isCtrlPressed = true;
+  }
 });
 
+document.addEventListener('keyup', function (event) {
+  if (event.key === 'Control') {
+    isCtrlPressed = false;
+  }
+});
 
+// Создаем взаимодействие DragBox
+var dragBox = new ol.interaction.DragBox({
+  condition: ol.events.condition.platformModifierKeyOnly,
+});
+
+// Добавляем взаимодействие на карту
+map.addInteraction(dragBox);
+
+// Обработчик события для DragBox
+// Создание источника данных WFS
+var wfsSource = new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: function (extent, resolution, projection) {
+        return 'http://localhost:8081/geoserver/tif/cars/wfs?' +
+            'service=WFS&version=1.1.0&request=GetFeature' +
+            '&typename=cars' +
+            '&outputFormat=application/json' +
+            '&srsname=EPSG:4326' +
+            '&bbox=' + extent.join(',') + ',EPSG:4326';
+    },
+});
 
 var wfsLayer = new ol.layer.Vector({
   source: wfsSource,
+  opacity: 0,
 })
+wfsLayer.setVisible(true);
 map.addLayer(wfsLayer);
 
 
-// Добавьте WMS слой к карте
-
-
-
-
-
-
-    var allLayers = [layer1, layer2, layer3, layer, layer4, layer5, layer6, shpLayerGroup];
-
-    layerSwitch.addEventListener('change', function () {
-  allLayers.forEach(function (layer) {
-    layer.setVisible(layerSwitch.checked);
-  });
+// Добавляем взаимодействие DragBox
+var dragBox = new ol.interaction.DragBox({
+  condition: ol.events.condition.platformModifierKeyOnly,
 });
-    searchButton.addEventListener('click', function() {
-      var query = searchInput.value;
-    
 
+// Добавляем взаимодействие на карту
+map.addInteraction(dragBox);
 
+// Обработчик события для DragBox
+dragBox.on('boxend', function () {
+  // Проверяем, зажата ли клавиша Ctrl
+  if (isCtrlPressed) {
+    // Выводим информацию о каждом объекте векторного слоя в выделенной области
+    var extent = dragBox.getGeometry().getExtent();
+    var features = wfsLayer.getSource().getFeaturesInExtent(extent);
+    console.log('Number of features in the extent:', features.length);
+
+    // Выводим информацию о каждом объекте векторного слоя в данной области
+    features.forEach(function (feature) {
+      console.log('ID:', feature.getId());
+      console.log('CLASS:', feature.getProperties().CLASS);
+      console.log('Geometry:', feature.getGeometry().getType());
+      console.log('---');
     });
+
+ 
+  }
+});
+
+
+
+
+
   </script>
 </body>
 </html>
