@@ -296,6 +296,7 @@
         </div>
 
       </div>
+      <div id="featureCount">Количество объектов: 0</div>
     </div>
   </div>
   <script type="text/javascript">
@@ -325,9 +326,7 @@
       })
       
     });
-    shpLayer.setVisible(false);
 
-    var allLayers = [layer1, shpLayer];
 
     // Обработчик изменения состояния чекбоксов
     classSwitches.forEach(function (switchElement) {
@@ -499,52 +498,11 @@ document.addEventListener('DOMContentLoaded', function () {
 });
    
 
-var wfsSource = new ol.source.Vector({
-      format: new ol.format.GeoJSON(),
-      url: function (extent, resolution, projection) {
-        return 'http://localhost:8081/geoserver/tif/cars/wfs?' +
-          'service=WFS&version=1.1.0&request=GetFeature' +
-          '&typename=cars' +
-          '&outputFormat=application/json' +
-          '&srsname=' + projection.getCode() +
-          '&srsname=EPSG:4326' + 
-          '&bbox=' + extent.join(',') + ',' + projection.getCode();
-      },
-      strategy: ol.loadingstrategy.bbox
-    });
 
 
 
 
 
-
-    var map = new ol.Map({
-      target: 'map',
-      layers: [
-        new ol.layer.Tile({
-          source: new ol.source.OSM()
-        }),
-        layer1,
-        shpLayer,
-
-      ],
-      view: new ol.View({
-        center: ol.proj.fromLonLat([30.800289, 59.662412]),
-        zoom: 15,
-      })
-    });
-
-
-
-
-
-
-
-    var wfsLayer = new ol.layer.Vector({
-      source: wfsSource,
-    })
-    wfsLayer.setVisible(false);
-    map.addLayer(wfsLayer);
 
 
 
@@ -557,6 +515,119 @@ var wfsSource = new ol.source.Vector({
     });
 
     
+
+
+
+
+
+    var map = new ol.Map({
+      target: 'map',
+      layers: [
+        new ol.layer.Tile({
+          source: new ol.source.OSM()
+        }),
+      
+        layer1,
+        shpLayer,
+      ],
+      view: new ol.View({
+        center: ol.proj.fromLonLat([30.800289, 59.662412]),
+        zoom: 15,
+      })
+    });
+
+
+    shpLayer.setVisible(false);
+
+    var allLayers = [layer1, shpLayer];
+
+
+    var wfsLayer = new ol.layer.Vector({
+      source: wfsSource,
+    })
+    wfsLayer.setVisible(false);
+    map.addLayer(wfsLayer);
+
+
+
+
+
+    var isCtrlPressed = false; // Флаг, указывающий, зажата ли клавиша Ctrl
+
+// Обработчик событий для отслеживания состояния клавиши Ctrl
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Control') {
+    isCtrlPressed = true;
+  }
+});
+
+document.addEventListener('keyup', function (event) {
+  if (event.key === 'Control') {
+    isCtrlPressed = false;
+  }
+});
+
+// Создаем взаимодействие DragBox
+var dragBox = new ol.interaction.DragBox({
+  condition: ol.events.condition.platformModifierKeyOnly,
+});
+
+// Добавляем взаимодействие на карту
+map.addInteraction(dragBox);
+
+// Обработчик события для DragBox
+// Создание источника данных WFS
+var wfsSource = new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: function (extent, resolution, projection) {
+        return 'http://localhost:8081/geoserver/tif/cars/wfs?' +
+            'service=WFS&version=1.1.0&request=GetFeature' +
+            '&typename=cars' +
+            '&outputFormat=application/json' +
+            '&srsname=EPSG:4326' +
+            '&bbox=' + extent.join(',') + ',EPSG:4326';
+    },
+});
+
+var wfsLayer = new ol.layer.Vector({
+  source: wfsSource,
+  opacity: 0,
+})
+wfsLayer.setVisible(true);
+map.addLayer(wfsLayer);
+
+
+// Добавляем взаимодействие DragBox
+var dragBox = new ol.interaction.DragBox({
+  condition: ol.events.condition.platformModifierKeyOnly,
+});
+
+// Добавляем взаимодействие на карту
+map.addInteraction(dragBox);
+
+// Обработчик события для DragBox
+dragBox.on('boxend', function () {
+  // Проверяем, зажата ли клавиша Ctrl
+  if (isCtrlPressed) {
+    // Выводим информацию о каждом объекте векторного слоя в выделенной области
+    var extent = dragBox.getGeometry().getExtent();
+    var features = wfsLayer.getSource().getFeaturesInExtent(extent);
+    console.log('Number of features in the extent:', features.length);
+    featureCount.innerHTML = 'Количество объектов: ' + features.length;
+    // Выводим информацию о каждом объекте векторного слоя в данной области
+    // features.forEach(function (feature) {
+    //   console.log('ID:', feature.getId());
+    //   console.log('CLASS:', feature.getProperties().CLASS);
+    //   console.log('Geometry:', feature.getGeometry().getType());
+    //   console.log('---');
+    // });
+
+
+  }
+});
+
+
+
 
   </script>
 
