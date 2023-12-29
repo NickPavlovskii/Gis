@@ -2,631 +2,631 @@
 <html>
 
 <head>
-    <title>OpenLayers Map with GeoServer Layer</title>
-    <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
-    <meta charset="UTF-8">
-    <script src="semantic/dist/semantic.min.js"></script>
-    <link rel="stylesheet" href="https://openlayers.org/en/v6.5.0/css/ol.css" type="text/css">
-    <script src="https://openlayers.org/en/v6.5.0/build/ol.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
-            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-    <script src="semantic/dist/semantic.min.js"></script>
-    <style>
-        .ui.styled.accordion .accordion .content,
-        .ui.styled.accordion .content {
-            padding: 0.5em 1em 0.5em;
-        }
+  <title>OpenLayers Map with GeoServer Layer</title>
+  <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+  <meta charset="UTF-8">
+  <script src="semantic/dist/semantic.min.js"></script>
+  <link rel="stylesheet" href="https://openlayers.org/en/v6.5.0/css/ol.css" type="text/css">
+  <script src="https://openlayers.org/en/v6.5.0/build/ol.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+  <script src="semantic/dist/semantic.min.js"></script>
+  <style>
+    .ui.styled.accordion .accordion .content,
+    .ui.styled.accordion .content {
+      padding: 0.5em 1em 0.5em;
+    }
 
-        .ui.tabular.menu + .attached:not(.top).segment,
-        .ui.tabular.menu + .attached:not(.top).segment + .attached:not(.top).segment {
-            width: 550px;
-        }
+    .ui.tabular.menu+.attached:not(.top).segment,
+    .ui.tabular.menu+.attached:not(.top).segment+.attached:not(.top).segment {
+      width: 550px;
+    }
 
-        /* Стиль для заголовка "Legend" */
-        #controls h3 {
-            font-size: 20px;
-            color: #333;
-        }
+    /* Стиль для заголовка "Legend" */
+    #controls h3 {
+      font-size: 20px;
+      color: #333;
+    }
 
-        /* Стиль для заголовка "Search" */
-        #searchInput,
-        #searchButton {
-            font-size: 16px;
-        }
+    /* Стиль для заголовка "Search" */
+    #searchInput,
+    #searchButton {
+      font-size: 16px;
+    }
 
-        /* Стиль для текстового поля ввода "Search" */
-        #searchInput {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+    /* Стиль для текстового поля ввода "Search" */
+    #searchInput {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
 
-        /* Стиль для кнопки поиска "Search" */
-        #searchButton {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+    /* Стиль для кнопки поиска "Search" */
+    #searchButton {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-            /* Стиль для кнопки поиска "Search" при наведении */
-            #searchButton:hover {
-                background-color: #0056b3;
-            }
-
-
-        #controls {
-            margin-left: 20px;
-            padding: 10px;
-        }
+    /* Стиль для кнопки поиска "Search" при наведении */
+    #searchButton:hover {
+      background-color: #0056b3;
+    }
 
 
-            #controls h2 {
-                font-size: 18px;
-            }
+    #controls {
+      margin-left: 20px;
+      padding: 10px;
+    }
 
 
-        .control-input {
-            margin-bottom: 5px;
-        }
-
-        .control-button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-
-            .control-button:hover {
-                background-color: #0056b3;
-            }
-
-        /* Стилизация переключателей классов */
-        .class-switch-label {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-
-            .class-switch-label input[type="checkbox"] {
-                display: none;
-            }
-
-            .class-switch-label .class-switch-icon {
-                font-size: 24px;
-                margin-right: 10px;
-                color: #007bff;
-            }
-
-            .class-switch-label input[type="checkbox"]:checked + .class-switch-icon {
-                color: #00b33c;
-            }
-
-            .class-switch-label .class-switch-name {
-                cursor: pointer;
-            }
-
-        /* Стили для элемента "Show/Hide Layer" */
-        .toggle-label {
-            display: flex;
-            align-items: center;
-        }
-
-        .hidden-button {
-            display: none;
-        }
-
-        .toggle-checkbox {
-            display: none;
-        }
-
-        .toggle-icon {
-            font-size: 24px;
-            margin-right: 10px;
-            color: #007bff;
-        }
-
-        .toggle-checkbox:checked + .toggle-icon {
-            color: #00b33c;
-        }
-
-        #coordinates-list {
-            max-height: 80px;
-            overflow-y: auto;
-        }
+    #controls h2 {
+      font-size: 18px;
+    }
 
 
-        #coordinates-list-large-vehicle {
-            max-height: 80px;
-            overflow-y: auto;
-        }
+    .control-input {
+      margin-bottom: 5px;
+    }
 
-        .object-item {
-            margin: 5px;
-            cursor: pointer;
-        }
+    .control-button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
 
-        .Info {
-            display: none;
-            /* Изначально скрыто */
-        }
+    .control-button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Стилизация переключателей классов */
+    .class-switch-label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .class-switch-label input[type="checkbox"] {
+      display: none;
+    }
+
+    .class-switch-label .class-switch-icon {
+      font-size: 24px;
+      margin-right: 10px;
+      color: #007bff;
+    }
+
+    .class-switch-label input[type="checkbox"]:checked+.class-switch-icon {
+      color: #00b33c;
+    }
+
+    .class-switch-label .class-switch-name {
+      cursor: pointer;
+    }
+
+    /* Стили для элемента "Show/Hide Layer" */
+    .toggle-label {
+      display: flex;
+      align-items: center;
+    }
+
+    .hidden-button {
+      display: none;
+    }
+
+    .toggle-checkbox {
+      display: none;
+    }
+
+    .toggle-icon {
+      font-size: 24px;
+      margin-right: 10px;
+      color: #007bff;
+    }
+
+    .toggle-checkbox:checked+.toggle-icon {
+      color: #00b33c;
+    }
+
+    #coordinates-list {
+      max-height: 80px;
+      overflow-y: auto;
+    }
 
 
-        .Info {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
+    #coordinates-list-large-vehicle {
+      max-height: 80px;
+      overflow-y: auto;
+    }
 
-        #Class {
-            font-size: 24px;
-            font-weight: bold;
-            color: blue;
-            /* Цвет можно изменить на ваш вкус */
-            margin-bottom: 10px;
-        }
+    .object-item {
+      margin: 5px;
+      cursor: pointer;
+    }
 
-        #selected-info {
-            font-size: 16px;
-        }
+    .Info {
+      display: none;
+      /* Изначально скрыто */
+    }
 
 
-        .selected {
-            font-weight: bold;
-            color: #4CAF50;
-            /* Замените этот цвет на желаемый */
-        }
+    .Info {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    #Class {
+      font-size: 24px;
+      font-weight: bold;
+      color: blue;
+      /* Цвет можно изменить на ваш вкус */
+      margin-bottom: 10px;
+    }
+
+    #selected-info {
+      font-size: 16px;
+    }
 
 
-        .ui.tabular.menu + .attached:not(.top).segment,
-        .ui.tabular.menu + .attached:not(.top).segment + .attached:not(.top).segment {
-            width: 550px;
-            padding-bottom: 8px;
-        }
+    .selected {
+      font-weight: bold;
+      color: #4CAF50;
+      /* Замените этот цвет на желаемый */
+    }
 
-        .infoblock {
-            max-width: 300px;
-            margin: 20px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: none;
-        }
 
-        .Info {
-            color: #333;
-        }
+    .ui.tabular.menu+.attached:not(.top).segment,
+    .ui.tabular.menu+.attached:not(.top).segment+.attached:not(.top).segment {
+      width: 550px;
+      padding-bottom: 8px;
+    }
 
-        #Class {
-            margin-top: 10px;
-            font-size: 1.5em;
-            color: #3498db;
-        }
+    .infoblock {
+      max-width: 300px;
+      margin: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
 
-        #selected-info {
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-    </style>
+    .Info {
+      color: #333;
+    }
+
+    #Class {
+      margin-top: 10px;
+      font-size: 1.5em;
+      color: #3498db;
+    }
+
+    #selected-info {
+      padding: 10px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
 </head>
 
 <body>
-    <div style="display: flex;">
-        <div id="map" style="width: 80%; height: 640px; float: left;"></div>
-        <div id="controls">
-            <div id="legend">
-                <h3>Легенда</h3>
-                <!-- Переключатель для отображения/скрытия слоя -->
-                <label for="layerSwitch" class="toggle-label">
-                    <input type="checkbox" id="layerSwitch" class="toggle-checkbox" checked>
-                    <i class="fas fa-layer-group toggle-icon"></i> Показать/Убрать слой
-                </label>
-                <div class="ui top attached tabular menu">
-                    <a class="active item" data-tab="first">Машины</a>
-                    <a class="item" data-tab="second">Деревья</a>
-                </div>
-                <div class="ui bottom attached active tab segment" data-tab="first">
-                    <div class="Cars">
-                        <div class="ui styled accordion" style="margin-top:10px ;">
-                            <div class="title">
-                                <i class="dropdown icon"></i>
-                                Легковая машина <i class="fas fa-car "></i>
-                            </div>
-                            <div class="content">
-                                <label class="class-switch-label">
-                                    <input type="checkbox" class="class-switch toggle-checkbox" value="small-vehicle">
-                                    <i class="fas fa-car class-switch-icon toggle-icon"></i>
-                                    <span class="class-switch-name header">Легковая машина</span>
-                                </label>
-                                <ul id="coordinates-list"></ul>
-                            </div>
-                            <div class="content">
-                                <label class="class-switch-label">
-                                </label>
-                            </div>
-                            <div class="title">
-                                <i class="dropdown icon"></i>
-                                Грузовик <i class="class-switch-icon fas fa-truck-pickup checked"></i>
-                            </div>
-                            <div class="content">
-                                <label class="class-switch-label">
-                                    <input type="checkbox" class="class-switch" value="large-vehicle">
-                                    <i class="class-switch-icon fas fa-truck-pickup checked"></i>
-                                    <span class="class-switch-name header">Грузовик</span>
-                                </label>
-                                <ul id="coordinates-list-large-vehicle"></ul>
-                            </div>
-                            <div class="title">
-                                <i class="dropdown icon"></i>
-                                Мост <i class="fas fa-bridge class-switch-icon"></i>
-                            </div>
-                            <div class="content">
-                                <label class="class-switch-label">
-                                    <input type="checkbox" class="class-switch" value="bridge">
-                                    <i class="fas fa-bridge class-switch-icon"></i>
-                                    <span class="class-switch-name header">Мост</span>
-                                </label>
-                                <ul id="coordinates-list-bridge"></ul>
-                            </div>
-                        </div>
-                        <div class="infoblock">
-                            <h3 class="Info">Информация</h3>
-                            <h2 id="Class"></h2>
-                            <div id="selected-info">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="ui bottom attached tab segment" data-tab="second">
-                    <label class="class-switch-label">
-                        <input type="checkbox" class="class-switch toggle-checkbox" value="trees" id="treeToggleCheckbox">
-                        <i class="fas fa-tree class-switch-icon toggle-icon" id="treeToggleIcon"></i>
-                        <span class="class-switch-name header">Деревья</span>
-                    </label>
-                    <div id="featureCount">Количество деревьев: 0</div>
-                </div>
-                <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
-                <script>
-                    $('.menu .item').tab();
-                </script>
-            </div>
+  <div style="display: flex;">
+    <div id="map" style="width: 80%; height: 640px; float: left;"></div>
+    <div id="controls">
+      <div id="legend">
+        <h3>Легенда</h3>
+        <!-- Переключатель для отображения/скрытия слоя -->
+        <label for="layerSwitch" class="toggle-label">
+          <input type="checkbox" id="layerSwitch" class="toggle-checkbox" checked>
+          <i class="fas fa-layer-group toggle-icon"></i> Показать/Убрать слой
+        </label>
+        <div class="ui top attached tabular menu">
+          <a class="active item" data-tab="first">Машины</a>
+          <a class="item" data-tab="second">Деревья</a>
         </div>
+        <div class="ui bottom attached active tab segment" data-tab="first">
+          <div class="Cars">
+            <div class="ui styled accordion" style="margin-top:10px ;">
+              <div class="title">
+                <i class="dropdown icon"></i>
+                Легковая машина <i class="fas fa-car "></i>
+              </div>
+              <div class="content">
+                <label class="class-switch-label">
+                  <input type="checkbox" class="class-switch toggle-checkbox" value="small-vehicle">
+                  <i class="fas fa-car class-switch-icon toggle-icon"></i>
+                  <span class="class-switch-name header">Легковая машина</span>
+                </label>
+                <ul id="coordinates-list"></ul>
+              </div>
+              <div class="content">
+                <label class="class-switch-label">
+                </label>
+              </div>
+              <div class="title">
+                <i class="dropdown icon"></i>
+                Грузовик <i class="class-switch-icon fas fa-truck-pickup checked"></i>
+              </div>
+              <div class="content">
+                <label class="class-switch-label">
+                  <input type="checkbox" class="class-switch" value="large-vehicle">
+                  <i class="class-switch-icon fas fa-truck-pickup checked"></i>
+                  <span class="class-switch-name header">Грузовик</span>
+                </label>
+                <ul id="coordinates-list-large-vehicle"></ul>
+              </div>
+              <div class="title">
+                <i class="dropdown icon"></i>
+                Мост <i class="fas fa-bridge class-switch-icon"></i>
+              </div>
+              <div class="content">
+                <label class="class-switch-label">
+                  <input type="checkbox" class="class-switch" value="bridge">
+                  <i class="fas fa-bridge class-switch-icon"></i>
+                  <span class="class-switch-name header">Мост</span>
+                </label>
+                <ul id="coordinates-list-bridge"></ul>
+              </div>
+            </div>
+            <div class="infoblock">
+              <h3 class="Info">Информация</h3>
+              <h2 id="Class"></h2>
+              <div id="selected-info">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ui bottom attached tab segment" data-tab="second">
+          <label class="class-switch-label">
+            <input type="checkbox" class="class-switch toggle-checkbox" value="trees" id="treeToggleCheckbox">
+            <i class="fas fa-tree class-switch-icon toggle-icon" id="treeToggleIcon"></i>
+            <span class="class-switch-name header">Деревья</span>
+          </label>
+          <div id="featureCount">Количество деревьев: 0</div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+        <script>
+          $('.menu .item').tab();
+        </script>
+      </div>
     </div>
+  </div>
 
-    <script type="text/javascript">
+  <script type="text/javascript">
 
-        var layerSwitch = document.getElementById('layerSwitch');
-        var searchButton = document.getElementById('searchButton');
-        var searchInput = document.getElementById('searchInput');
-        var classSwitches = document.querySelectorAll('.class-switch');
+    var layerSwitch = document.getElementById('layerSwitch');
+    var searchButton = document.getElementById('searchButton');
+    var searchInput = document.getElementById('searchInput');
+    var classSwitches = document.querySelectorAll('.class-switch');
 
-        var layer1 = new ol.layer.Image({
-        source: new ol.source.ImageWMS({
+    var layer1 = new ol.layer.Image({
+      source: new ol.source.ImageWMS({
         url: '/geoserver/web_map/tif/wms',
         params: {
-        'LAYERS': 'tif',
+          'LAYERS': 'tif',
         },
-        }),
-        });
+      }),
+    });
 
 
-        var shpLayer = new ol.layer.Image({
-        source: new ol.source.ImageWMS({
+    var shpLayer = new ol.layer.Image({
+      source: new ol.source.ImageWMS({
         url: '/geoserver/tif/cars/wms',
         params: {
-        'LAYERS': 'cars',
+          'LAYERS': 'cars',
         },
         serverType: 'geoserver',
-        })
-        });
+      })
+    });
 
 
-        // Обработчик изменения состояния чекбоксов
-        classSwitches.forEach(function (switchElement) {
-        switchElement.addEventListener("change", function () {
+    // Обработчик изменения состояния чекбоксов
+    classSwitches.forEach(function (switchElement) {
+      switchElement.addEventListener("change", function () {
         var selectedClasses = [];
         // Находим все выбранные классы
         classSwitches.forEach(function (checkbox) {
-        if (checkbox.checked) {
-        selectedClasses.push(checkbox.value);
-        }
+          if (checkbox.checked) {
+            selectedClasses.push(checkbox.value);
+          }
         });
 
         if (shpLayer instanceof ol.layer.Image) {
-        var source = shpLayer.getSource();
-        var layerClass = source.getParams().LAYERS;
-        if (selectedClasses.length === 0 || selectedClasses.includes(layerClass)) {
-        // Если ничего не выбрано или текущий слой включен, отобразите слой и уберите фильтр
-        shpLayer.setVisible(false);
-        source.updateParams({ CQL_FILTER: "" });
-        } else {
-        // В противном случае, скройте слой и установите фильтр на основе выбранных классов
-        shpLayer.setVisible(true);
-        source.updateParams({ CQL_FILTER: "CLASS IN ('" + selectedClasses.join("','") + "')" });
+          var source = shpLayer.getSource();
+          var layerClass = source.getParams().LAYERS;
+          if (selectedClasses.length === 0 || selectedClasses.includes(layerClass)) {
+            // Если ничего не выбрано или текущий слой включен, отобразите слой и уберите фильтр
+            shpLayer.setVisible(false);
+            source.updateParams({ CQL_FILTER: "" });
+          } else {
+            // В противном случае, скройте слой и установите фильтр на основе выбранных классов
+            shpLayer.setVisible(true);
+            source.updateParams({ CQL_FILTER: "CLASS IN ('" + selectedClasses.join("','") + "')" });
+          }
         }
-        }
-        });
-        });
-        function showInfo() {
-        // Получите элемент с классом 'Info'
-        var infoElement = document.getElementsByClassName('infoblock')[0];
-        infoElement.style.display = 'block';
-        }
-        // Функция для получения данных по классу объекта и отображения на карте
-        function fetchDataByClass(objectClass, listId) {
-        var Filter = new ol.format.filter.EqualTo('CLASS', objectClass);
-        var wfsRequest = new ol.format.WFS().writeGetFeature({
+      });
+    });
+    function showInfo() {
+      // Получите элемент с классом 'Info'
+      var infoElement = document.getElementsByClassName('infoblock')[0];
+      infoElement.style.display = 'block';
+    }
+    // Функция для получения данных по классу объекта и отображения на карте
+    function fetchDataByClass(objectClass, listId) {
+      var Filter = new ol.format.filter.EqualTo('CLASS', objectClass);
+      var wfsRequest = new ol.format.WFS().writeGetFeature({
         srsName: 'EPSG:4326',
         featureTypes: ['cars'],
         outputFormat: 'application/json',
         filter: Filter,
-        });
+      });
 
-        fetch('/geoserver/tif/cars/wfs', {
+      fetch('/geoserver/tif/cars/wfs', {
         method: 'POST',
         body: new XMLSerializer().serializeToString(wfsRequest),
         headers: new Headers({
-        'Content-Type': 'text/xml',
+          'Content-Type': 'text/xml',
         }),
-        })
+      })
         .then(function (response) {
-        return response.json();
+          return response.json();
         })
         .then(function (json) {
-        var features = json.features;
-        var coordinatesList = document.getElementById(listId);
-        var Info = document.getElementsByClassName('infoblock');
-        var selectedInfo = document.getElementById('selected-info');
-        var Class = document.getElementById('Class');
-        coordinatesList.innerHTML = ''; // Очистите предыдущий список
-        var objectLayers = []; // Массив для хранения слоев объектов
-        features.forEach(function (feature, i) {
-        var geometry = feature.geometry;
-        var coordinates = geometry.coordinates[0][0][0];
-        var vehicleClass = feature.properties.CLASS;
-        var ID = feature.properties.ID;
-        var objectLayer = new ol.layer.Vector({
-        source: new ol.source.Vector(),
-        visible: false,
-        });
-        objectLayers.push(objectLayer);
-        var listItem = document.createElement('div');
-        listItem.classList.add('object-item');
-        listItem.textContent = getObjectLabel(objectClass, i);
-        listItem.addEventListener('click', function () {
-        var index = parseInt(this.textContent.split(' ')[1]) - 1;
-        var selectedCoordinates = features[index].geometry.coordinates[0][0][0];
-        var Coordinate = features[index].geometry.coordinates[0][0];
-        var pred = features[index].properties.PRED;
-        var listItems = document.querySelectorAll('.object-item');
-        listItems.forEach(function (item) {
-        item.classList.remove('selected');
-        });
-        this.classList.add('selected');
-        Class.innerHTML = getObjectTitle(objectClass);
-        selectedInfo.innerHTML = '<b>Координаты:</b> ' + '<br>Долгота: ' + selectedCoordinates[0] +
-        '<br>Широта: ' + selectedCoordinates[1] + '<br>' + '<br> Confidences: ' + pred;
-        selectedInfo.style.display = 'block';
-        showInfo();
+          var features = json.features;
+          var coordinatesList = document.getElementById(listId);
+          var Info = document.getElementsByClassName('infoblock');
+          var selectedInfo = document.getElementById('selected-info');
+          var Class = document.getElementById('Class');
+          coordinatesList.innerHTML = ''; // Очистите предыдущий список
+          var objectLayers = []; // Массив для хранения слоев объектов
+          features.forEach(function (feature, i) {
+            var geometry = feature.geometry;
+            var coordinates = geometry.coordinates[0][0][0];
+            var vehicleClass = feature.properties.CLASS;
+            var ID = feature.properties.ID;
+            var objectLayer = new ol.layer.Vector({
+              source: new ol.source.Vector(),
+              visible: false,
+            });
+            objectLayers.push(objectLayer);
+            var listItem = document.createElement('div');
+            listItem.classList.add('object-item');
+            listItem.textContent = getObjectLabel(objectClass, i);
+            listItem.addEventListener('click', function () {
+              var index = parseInt(this.textContent.split(' ')[1]) - 1;
+              var selectedCoordinates = features[index].geometry.coordinates[0][0][0];
+              var Coordinate = features[index].geometry.coordinates[0][0];
+              var pred = features[index].properties.PRED;
+              var listItems = document.querySelectorAll('.object-item');
+              listItems.forEach(function (item) {
+                item.classList.remove('selected');
+              });
+              this.classList.add('selected');
+              Class.innerHTML = getObjectTitle(objectClass);
+              selectedInfo.innerHTML = '<b>Координаты:</b> ' + '<br>Долгота: ' + selectedCoordinates[0] +
+                '<br>Широта: ' + selectedCoordinates[1] + '<br>' + '<br> Confidences: ' + pred;
+              selectedInfo.style.display = 'block';
+              showInfo();
 
-        objectLayers.forEach(function (layer) {
-        layer.getSource().clear();
-        layer.setVisible(false);
-        });
+              objectLayers.forEach(function (layer) {
+                layer.getSource().clear();
+                layer.setVisible(false);
+              });
 
-        // Создайте новый объект полигона и добавьте его на карту
-        var feature = new ol.Feature({
-        geometry: new ol.geom.Polygon([[
-        ol.proj.fromLonLat(Coordinate[0]),
-        ol.proj.fromLonLat(Coordinate[1]),
-        ol.proj.fromLonLat(Coordinate[2]),
-        ol.proj.fromLonLat(Coordinate[3]),
-        ol.proj.fromLonLat(Coordinate[4]),
-        ol.proj.fromLonLat(Coordinate[0]),
-        ]]),
-        });
+              // Создайте новый объект полигона и добавьте его на карту
+              var feature = new ol.Feature({
+                geometry: new ol.geom.Polygon([[
+                  ol.proj.fromLonLat(Coordinate[0]),
+                  ol.proj.fromLonLat(Coordinate[1]),
+                  ol.proj.fromLonLat(Coordinate[2]),
+                  ol.proj.fromLonLat(Coordinate[3]),
+                  ol.proj.fromLonLat(Coordinate[4]),
+                  ol.proj.fromLonLat(Coordinate[0]),
+                ]]),
+              });
 
-        objectLayers[index].getSource().addFeature(feature);
+              objectLayers[index].getSource().addFeature(feature);
 
-        var lon = selectedCoordinates[0];
-        var lat = selectedCoordinates[1];
-        map.getView().setCenter(ol.proj.fromLonLat([lon, lat]));
-        map.getView().setZoom(21);
-        objectLayers[index].setVisible(true);
+              var lon = selectedCoordinates[0];
+              var lat = selectedCoordinates[1];
+              map.getView().setCenter(ol.proj.fromLonLat([lon, lat]));
+              map.getView().setZoom(21);
+              objectLayers[index].setVisible(true);
+            });
+            coordinatesList.appendChild(listItem);
+          });
+          objectLayers.forEach(function (layer) {
+            map.addLayer(layer);
+          });
         });
-        coordinatesList.appendChild(listItem);
-        });
-        objectLayers.forEach(function (layer) {
-        map.addLayer(layer);
-        });
-        });
-        }
+    }
 
-        // Функция для получения заголовка объекта
-        function getObjectTitle(objectClass) {
-        switch (objectClass) {
+    // Функция для получения заголовка объекта
+    function getObjectTitle(objectClass) {
+      switch (objectClass) {
         case 'small-vehicle':
-        return 'Легковая машина';
+          return 'Легковая машина';
         case 'large-vehicle':
-        return 'Грузовик';
+          return 'Грузовик';
         case 'bridge':
-        return 'Мост';
+          return 'Мост';
         default:
-        return '';
-        }
-        }
+          return '';
+      }
+    }
 
-        // Функция для получения метки объекта
-        function getObjectLabel(objectClass, index) {
-        switch (objectClass) {
+    // Функция для получения метки объекта
+    function getObjectLabel(objectClass, index) {
+      switch (objectClass) {
         case 'small-vehicle':
-        return 'Легковая ' + (index + 1);
+          return 'Легковая ' + (index + 1);
         case 'large-vehicle':
-        return 'Грузовая ' + (index + 1);
+          return 'Грузовая ' + (index + 1);
         case 'bridge':
-        return 'Мост ' + (index + 1);
+          return 'Мост ' + (index + 1);
         default:
-        return '';
-        }
-        }
+          return '';
+      }
+    }
 
-        document.addEventListener('DOMContentLoaded', function () {
-        fetchDataByClass('small-vehicle', 'coordinates-list');
-        fetchDataByClass('large-vehicle', 'coordinates-list-large-vehicle');
-        fetchDataByClass('bridge', 'coordinates-list-bridge');
-        });
+    document.addEventListener('DOMContentLoaded', function () {
+      fetchDataByClass('small-vehicle', 'coordinates-list');
+      fetchDataByClass('large-vehicle', 'coordinates-list-large-vehicle');
+      fetchDataByClass('bridge', 'coordinates-list-bridge');
+    });
 
 
-        layerSwitch.addEventListener('change', function () {
-        allLayers.forEach(function (layer) {
+    layerSwitch.addEventListener('change', function () {
+      allLayers.forEach(function (layer) {
         layer.setVisible(layerSwitch.checked);
-        });
-        });
+      });
+    });
 
 
-        var map = new ol.Map({
-        target: 'map',
-        layers: [
+    var map = new ol.Map({
+      target: 'map',
+      layers: [
         new ol.layer.Tile({
-        source: new ol.source.OSM()
+          source: new ol.source.OSM()
         }),
         layer1,
         shpLayer,
-        ],
-        view: new ol.View({
+      ],
+      view: new ol.View({
         center: ol.proj.fromLonLat([30.800289, 59.662412]),
         zoom: 15,
-        })
-        });
+      })
+    });
 
 
-        shpLayer.setVisible(false);
-        var allLayers = [layer1, shpLayer];
+    shpLayer.setVisible(false);
+    var allLayers = [layer1, shpLayer];
 
-        var wfsLayer = new ol.layer.Vector({
-        source: wfsSource,
-        })
-        wfsLayer.setVisible(false);
-        map.addLayer(wfsLayer);
+    var wfsLayer = new ol.layer.Vector({
+      source: wfsSource,
+    })
+    wfsLayer.setVisible(false);
+    map.addLayer(wfsLayer);
 
 
-        var isCtrlPressed = false; // Флаг, указывающий, зажата ли клавиша Ctrl
+    var isCtrlPressed = false; // Флаг, указывающий, зажата ли клавиша Ctrl
 
-        // Обработчик событий для отслеживания состояния клавиши Ctrl
-        document.addEventListener('keydown', function (event) {
-        if (event.key === 'Control') {
+    // Обработчик событий для отслеживания состояния клавиши Ctrl
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Control') {
         isCtrlPressed = true;
-        }
-        });
+      }
+    });
 
-        document.addEventListener('keyup', function (event) {
-        if (event.key === 'Control') {
+    document.addEventListener('keyup', function (event) {
+      if (event.key === 'Control') {
         isCtrlPressed = false;
-        }
-        });
+      }
+    });
 
-        // Создаем взаимодействие DragBox
-        var dragBox = new ol.interaction.DragBox({
-        condition: ol.events.condition.platformModifierKeyOnly,
-        });
+    // Создаем взаимодействие DragBox
+    var dragBox = new ol.interaction.DragBox({
+      condition: ol.events.condition.platformModifierKeyOnly,
+    });
 
-        // Добавляем взаимодействие на карту
-        map.addInteraction(dragBox);
+    // Добавляем взаимодействие на карту
+    map.addInteraction(dragBox);
 
-        var wfsSource = new ol.source.Vector({
-        format: new ol.format.GeoJSON(),
-        url: function (extent, resolution, projection) {
+    var wfsSource = new ol.source.Vector({
+      format: new ol.format.GeoJSON(),
+      url: function (extent, resolution, projection) {
         return '/geoserver/tif/cars/wfs?' +
-        'service=WFS&version=1.1.0&request=GetFeature' +
-        '&typename=cars' +
-        '&outputFormat=application/json' +
-        '&srsname=EPSG:4326' +
-        '&bbox=' + extent.join(',') + ',EPSG:4326';
-        },
-        });
+          'service=WFS&version=1.1.0&request=GetFeature' +
+          '&typename=cars' +
+          '&outputFormat=application/json' +
+          '&srsname=EPSG:4326' +
+          '&bbox=' + extent.join(',') + ',EPSG:4326';
+      },
+    });
 
-        var wfsLayer = new ol.layer.Vector({
-        source: wfsSource,
-        opacity: 0,
-        })
-        wfsLayer.setVisible(true);
-        map.addLayer(wfsLayer);
+    var wfsLayer = new ol.layer.Vector({
+      source: wfsSource,
+      opacity: 0,
+    })
+    wfsLayer.setVisible(true);
+    map.addLayer(wfsLayer);
 
-        var treeStyle = new ol.style.Style({
-        fill: new ol.style.Fill({
+    var treeStyle = new ol.style.Style({
+      fill: new ol.style.Fill({
         color: 'transparent', // Set the fill color to transparent to remove the fill
-        }),
-        stroke: new ol.style.Stroke({
+      }),
+      stroke: new ol.style.Stroke({
         color: 'rgba(0, 255, 0, 0.3)', // Set the stroke color to green or any desired color
         width: 1, // Set the stroke width to control the thickness of the border
-        }),
-        });
-        var wfsSourceTrees = new ol.source.Vector({
-        format: new ol.format.GeoJSON(),
-        url: function (extent, resolution, projection) {
+      }),
+    });
+    var wfsSourceTrees = new ol.source.Vector({
+      format: new ol.format.GeoJSON(),
+      url: function (extent, resolution, projection) {
         return '/geoserver/web_map/tree-0-0/wfs?' +
-        'service=WFS&version=1.1.0&request=GetFeature' +
-        '&typename=tree-0-0' +
-        '&outputFormat=application/json' +
-        '&srsname=EPSG:4326' +
-        '&bbox=' + extent.join(',') + ',EPSG:4326';
-        },
-        });
+          'service=WFS&version=1.1.0&request=GetFeature' +
+          '&typename=tree-0-0' +
+          '&outputFormat=application/json' +
+          '&srsname=EPSG:4326' +
+          '&bbox=' + extent.join(',') + ',EPSG:4326';
+      },
+    });
 
-        var wfsLayerTrees = new ol.layer.Vector({
-        source: wfsSourceTrees,
-        style: treeStyle,
-        });
+    var wfsLayerTrees = new ol.layer.Vector({
+      source: wfsSourceTrees,
+      style: treeStyle,
+    });
 
-        wfsLayerTrees.setVisible(false);
-        map.addLayer(wfsLayerTrees);
+    wfsLayerTrees.setVisible(false);
+    map.addLayer(wfsLayerTrees);
 
-        // Add event listener to the checkbox
-        $('#treeToggleCheckbox').change(function () {
-        var isChecked = $(this).prop('checked');
-        wfsLayerTrees.setVisible(isChecked);
-        });
-        // Добавляем взаимодействие DragBox
-        var dragBox = new ol.interaction.DragBox({
-        condition: ol.events.condition.platformModifierKeyOnly,
-        });
+    // Add event listener to the checkbox
+    $('#treeToggleCheckbox').change(function () {
+      var isChecked = $(this).prop('checked');
+      wfsLayerTrees.setVisible(isChecked);
+    });
+    // Добавляем взаимодействие DragBox
+    var dragBox = new ol.interaction.DragBox({
+      condition: ol.events.condition.platformModifierKeyOnly,
+    });
 
-        // Добавляем взаимодействие на карту
-        map.addInteraction(dragBox);
+    // Добавляем взаимодействие на карту
+    map.addInteraction(dragBox);
 
 
-        // Обработчик события для DragBox
-        dragBox.on('boxend', function () {
-        // Проверяем, зажата ли клавиша Ctrl
-        if (isCtrlPressed) {
+    // Обработчик события для DragBox
+    dragBox.on('boxend', function () {
+      // Проверяем, зажата ли клавиша Ctrl
+      if (isCtrlPressed) {
         // Выводим информацию о каждом объекте векторного слоя в выделенной области
         var extent = dragBox.getGeometry().getExtent();
         var features = wfsLayerTrees.getSource().getFeaturesInExtent(extent);
         console.log('Number of features in the extent:', features.length);
         featureCount.innerHTML = 'Количество объектов: ' + features.length;
 
-        }
-        });
+      }
+    });
 
-    </script>
+  </script>
 
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
-    <script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+  <script>
 
-        $('.ui.accordion').accordion();
-    </script>
+    $('.ui.accordion').accordion();
+  </script>
 </body>
 
 </html>
