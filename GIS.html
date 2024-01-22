@@ -4,7 +4,7 @@
 <head>
   <title>OpenLayers Map with GeoServer Layer</title>
   <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
-  <meta charset="UTF-8">
+
   <script src="semantic/dist/semantic.min.js"></script>
   <link rel="stylesheet" href="https://openlayers.org/en/v6.5.0/css/ol.css" type="text/css">
   <script src="https://openlayers.org/en/v6.5.0/build/ol.js"></script>
@@ -217,6 +217,66 @@
       border: 1px solid #ddd;
       border-radius: 4px;
     }
+
+    .layer-switch {
+      position: relative;
+    }
+
+    .toggle-label {
+      display: flex;
+      cursor: pointer;
+    }
+
+    .toggle-label span {
+      font-size: 24px;
+      padding: 0 10px;
+      transition: color 0.3s;
+    }
+
+    #layerToggle {
+      display: none;
+    }
+
+    #layerToggle:checked+.toggle-label .individual-trees-icon {
+      color: #888;
+    }
+
+    .toggle-container {
+      display: flex;
+    }
+
+    .toggle {
+      cursor: pointer;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin: 0 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background-color 0.3s;
+    }
+
+    .toggle img {
+      width: 50px;
+      height: 50px;
+      margin-bottom: 5px;
+    }
+
+    .toggle.active {
+      background-color: #87CEEB;
+      /* Цвет активного тега */
+      color: #fff;
+    }
+
+    #layerToggle:checked+.toggle-label .combined-layer-icon {
+      color: #2ecc71;
+    }
+
+    .second_container {
+      justify-content: space-between;
+      display: flex;
+    }
   </style>
 </head>
 
@@ -287,12 +347,23 @@
             </div>
           </div>
         </div>
+
         <div class="ui bottom attached tab segment" data-tab="second">
-          <label class="class-switch-label">
-            <input type="checkbox" class="class-switch toggle-checkbox" value="trees" id="treeToggleCheckbox">
-            <i class="fas fa-tree class-switch-icon toggle-icon" id="treeToggleIcon"></i>
-            <span class="class-switch-name header">Деревья</span>
-          </label>
+          <div class="second_container">
+            <label class="class-switch-label">
+              <input type="checkbox" class="class-switch toggle-checkbox" value="trees" id="treeToggleCheckbox">
+              <i class="fas fa-tree class-switch-icon toggle-icon" id="treeToggleIcon"></i>
+              <span class="class-switch-name header">Деревья</span>
+            </label>
+            <div class="ui toggle checkbox">
+              <input type="checkbox" name="public">
+              <label>
+                <span class="individual-trees-icon">🌳</span>
+                /
+                <span class="combined-layer-icon">🏞️</span>
+              </label>
+            </div>
+          </div>
           <div id="featureCount">Количество деревьев: 0</div>
         </div>
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -303,6 +374,7 @@
       </div>
     </div>
   </div>
+
 
   <script type="text/javascript">
 
@@ -495,6 +567,7 @@
     });
 
 
+
     var map = new ol.Map({
       target: 'map',
       layers: [
@@ -511,8 +584,9 @@
     });
 
 
+
     shpLayer.setVisible(false);
-    var allLayers = [layer1, shpLayer];
+    var allLayers = [layer1, shpLayer, activeTreesLayer];
 
     var wfsLayer = new ol.layer.Vector({
       source: wfsSource,
@@ -572,6 +646,9 @@
         width: 1, // Set the stroke width to control the thickness of the border
       }),
     });
+
+
+
     var wfsSourceTrees = new ol.source.Vector({
       format: new ol.format.GeoJSON(),
       url: function (extent, resolution, projection) {
@@ -584,6 +661,10 @@
       },
     });
 
+
+
+
+
     var wfsLayerTrees = new ol.layer.Vector({
       source: wfsSourceTrees,
       style: treeStyle,
@@ -592,11 +673,57 @@
     wfsLayerTrees.setVisible(false);
     map.addLayer(wfsLayerTrees);
 
+    var tree = new ol.layer.Image({
+      source: new ol.source.ImageWMS({
+        url: 'geoserver/trees/tif-0-0_preds/wms',
+        params: {
+          'LAYERS': 'tif-0-0_preds ',
+        },
+      }),
+      opacity: 0.8,
+    });
+
+    tree.setVisible(false);
+    map.addLayer(tree);
+
+
+
+
+
     // Add event listener to the checkbox
     $('#treeToggleCheckbox').change(function () {
       var isChecked = $(this).prop('checked');
       wfsLayerTrees.setVisible(isChecked);
     });
+
+    var activeTreesLayer = wfsLayerTrees;
+
+    $('#treeToggleCheckbox').change(function () {
+      var isChecked = $(this).prop('checked');
+      activeLayer.setVisible(isChecked);
+    });
+
+    // Add event listener to the tree layer toggle checkbox
+    $('#treeLayerToggleCheckbox').change(function () {
+      var isChecked = $(this).prop('checked');
+
+      // Выключаем предыдущий активный слой
+      activeLayer.setVisible(false);
+
+      if (isChecked) {
+        // Включаем новый активный слой (tree)
+        tree.setVisible(true);
+        activeLayer = tree;
+      } else {
+        // Включаем новый активный слой (wfsLayerTrees)
+        wfsLayerTrees.setVisible(true);
+        activeLayer = wfsLayerTrees;
+      }
+    });
+
+
+
+
     // Добавляем взаимодействие DragBox
     var dragBox = new ol.interaction.DragBox({
       condition: ol.events.condition.platformModifierKeyOnly,
@@ -619,12 +746,13 @@
       }
     });
 
+
   </script>
 
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
   <script>
-
+    // Инициализация аккордеона Semantic UI
     $('.ui.accordion').accordion();
   </script>
 </body>
